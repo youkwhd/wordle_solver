@@ -12,13 +12,11 @@ if __name__ == "__main__":
             prog="wordle_solver.py",
             description="wordle solver")
 
-    parser.add_argument("-d", "--data", metavar="path", help="text database")
+    parser.add_argument("-d", "--data", metavar="path", default="data/example.txt", help="text database")
     parser.add_argument("-r", "--random", default=False, action="store_true", help="get random word")
 
     opts = parser.parse_args()
-
-    words_path = opts.data if opts.data is not None else "data/example.txt"
-    words = ws_load_words(words_path)
+    words = ws_load_words(opts.data)
 
     if opts.random:
         print(random.choice(words))
