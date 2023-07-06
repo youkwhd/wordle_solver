@@ -7,7 +7,7 @@ from colorama import Fore as F
 import argparse
 from . import filter as ws_filter
 
-SLEEP_INTERVAL = 0.2
+SLEEP_INTERVAL = 0
 blacklist: list[str] = []
 corrects: dict[str, int] = {}
 wrong_spots: dict[str, list[int]] = {}
@@ -33,19 +33,29 @@ def ws_print_ascii_art():
  |__ --|  _  |  |  |  |  -__|   _|   
  |_____|_____|__|\\___/|_____|__|     {F.RESET}""")
 
-def ws_handle_input() -> str:
-    return result
-
 def ws_parse_input(word: str, input: str):
-    assert len(input) == len(word)
+    if len(input) != len(word):
+        print(F.GREEN, end="")
+        print(f"[*]: Input length does not match with current word..")
+        return
 
     for idx, ch in enumerate(input):
         match ch:
             case "B":
+                if word[idx] in corrects or word[idx] in wrong_spots:
+                    continue
+
                 blacklist.append(word[idx])
             case "C":
+                if word[idx] in blacklist:
+                    blacklist.pop(blacklist.index(word[idx]))
+
+                # TODO: multiple values of correct indexes
                 corrects[word[idx]] = idx
             case "W":
+                if word[idx] in blacklist:
+                    blacklist.pop(blacklist.index(word[idx]))
+
                 if ch not in wrong_spots:
                     wrong_spots[word[idx]] = []
 
@@ -86,44 +96,13 @@ if __name__ == "__main__":
 
     print(f"[*]: Assuming wordle size is {F.RED}\"{len(word)}\"")
     print(F.GREEN, end="")
-    
     time.sleep(SLEEP_INTERVAL)
 
     print(f"[*]: Waiting for input..")
     time.sleep(SLEEP_INTERVAL)
 
-    while len(words) > 1:
-        print(F.RESET, end="")
-        result = input(">> ")
-
-        if result.startswith("!exit"):
-            print(F.GREEN, end="")
-            print(f"[*]: Exiting..")
-            exit(0)
-        elif result.startswith("!change"):
-            new_word = result.split()[1]
-            print(F.GREEN, end="")
-            print(f"[*]: Changed word from {F.RED}\"{word}\"{F.GREEN} to {F.RED}\"{new_word}\"{F.GREEN}..")
-            word = new_word
-        else:
-            ws_parse_input(word, result)
-
-            words = ws_filter.has(words, [char for char in wrong_spots])
-            words = ws_filter.correct_alphabets(words, corrects)
-            words = ws_filter.blacklist_alphabets(words, blacklist)
-            words = ws_filter.wrong_spot(words, wrong_spots)
-
-            print(F.GREEN, end="")
-            print(f"[*]: {len(words)} words left")
-            for w in words:
-                print(F.GREEN, end="")
-                print(f"[*]: {F.RED}\"{w}\"")
-
-        while len(result) != len(word):
-            print(F.GREEN, end="")
-            print(f"[*]: Wrong size of input")
-            print(f"[*]: Waiting for input..")
-
+    while True:
+        while len(words) > 1:
             print(F.RESET, end="")
             result = input(">> ")
 
@@ -131,7 +110,7 @@ if __name__ == "__main__":
                 print(F.GREEN, end="")
                 print(f"[*]: Exiting..")
                 exit(0)
-            elif result.startswith("!change"):
+            elif result.startswith("!use"):
                 new_word = result.split()[1]
                 print(F.GREEN, end="")
                 print(f"[*]: Changed word from {F.RED}\"{word}\"{F.GREEN} to {F.RED}\"{new_word}\"{F.GREEN}..")
@@ -139,8 +118,8 @@ if __name__ == "__main__":
             else:
                 ws_parse_input(word, result)
 
-                words = ws_filter.has(words, [char for char in wrong_spots])
                 words = ws_filter.correct_alphabets(words, corrects)
+                words = ws_filter.has(words, [char for char in wrong_spots])
                 words = ws_filter.blacklist_alphabets(words, blacklist)
                 words = ws_filter.wrong_spot(words, wrong_spots)
 
@@ -150,9 +129,65 @@ if __name__ == "__main__":
                     print(F.GREEN, end="")
                     print(f"[*]: {F.RED}\"{w}\"")
 
-    if len(words) == 1:
+            while len(result) != len(word):
+                print(F.GREEN, end="")
+                print(f"[*]: Wrong size of input")
+                print(f"[*]: Waiting for input..")
+
+                print(F.RESET, end="")
+                result = input(">> ")
+
+                if result.startswith("!exit"):
+                    print(F.GREEN, end="")
+                    print(f"[*]: Exiting..")
+                    exit(0)
+                elif result.startswith("!use"):
+                    new_word = result.split()[1]
+                    print(F.GREEN, end="")
+                    print(f"[*]: Changed word from {F.RED}\"{word}\"{F.GREEN} to {F.RED}\"{new_word}\"{F.GREEN}..")
+                    word = new_word
+                else:
+                    ws_parse_input(word, result)
+
+                    words = ws_filter.correct_alphabets(words, corrects)
+                    words = ws_filter.has(words, [char for char in wrong_spots])
+                    words = ws_filter.blacklist_alphabets(words, blacklist)
+                    words = ws_filter.wrong_spot(words, wrong_spots)
+
+                    print(F.GREEN, end="")
+                    print(f"[*]: {len(words)} words left")
+                    for w in words:
+                        print(F.GREEN, end="")
+                        print(f"[*]: {F.RED}\"{w}\"")
+
+        if len(words) == 1:
+            print(F.GREEN, end="")
+            print(f"[*]: Found word {F.RED}\"{words[0]}\"")
+        else:
+            print(F.GREEN, end="")
+            print(f"[*]: Word is not found")
+
         print(F.GREEN, end="")
-        print(f"[*]: Found word {F.RED}\"{words[0]}\"")
-    else:
+        print(f"[*]: Resetting words..")
+
+        blacklist: list[str] = []
+        corrects: dict[str, int] = {}
+        wrong_spots: dict[str, list[int]] = {}
+
+        words = ws_load_words(opts.data)
+
         print(F.GREEN, end="")
-        print(f"[*]: Word is not found")
+        print("[*]: Choosing unique word..")
+        time.sleep(SLEEP_INTERVAL)
+        word = ws_get_unique_word(words)
+
+        print(f"[*]: Got word {F.RED}\"{word}\"")
+        print(F.GREEN, end="")
+        time.sleep(SLEEP_INTERVAL)
+
+        print(f"[*]: Assuming wordle size is {F.RED}\"{len(word)}\"")
+        print(F.GREEN, end="")
+        time.sleep(SLEEP_INTERVAL)
+
+        print(f"[*]: Waiting for input..")
+        time.sleep(SLEEP_INTERVAL)
