@@ -1,7 +1,17 @@
 #!/usr/bin/env python
 
-from argparse import ArgumentParser
+from argparse import ArgumentParser as __ArgumentParser
 from wordle_solver import WordleSolver
+
+class ArgumentParser(__ArgumentParser):
+    def print_help(self, file=None):
+        # TODO: expand help message
+        print("usage: wordle_solver.py [-d file_path] [-b blacklist]... [-c corrects]... [-w wrong_spots]...")
+
+    def error(self, message: str):
+        self.print_help()
+        exit(1)
+
 
 __WORD_SIZE__ = 5
 
@@ -33,31 +43,23 @@ def parse_wrong_spots(wrong_spots: list[str]) -> dict[str, list[int]]:
     return parse_characters(wrong_spots)
 
 if __name__ == "__main__":
-    # TODO: remove error
-    # reproduce: python worlde_solver.py -q
-    argparser = ArgumentParser(prog="wordle_solver.py", description="wordle solver", add_help=False)
-    argparser.add_argument("-h", "--help", action="store_true", default=False)
+    argparser = ArgumentParser(prog="wordle_solver")
     argparser.add_argument("-d", "--data", metavar="path", default="data/example.txt")
     argparser.add_argument("-r", "--random", action="store_true", default=False)
     argparser.add_argument("-b", "--blacklist", nargs="*", metavar="blacklist", default=[])
     argparser.add_argument("-c", "--correct", nargs="*", metavar="corrects", default=[])
     argparser.add_argument("-w", "--wrong", nargs="*", metavar="wrong_spots", default=[])
-    opts = argparser.parse_args()
+    args = argparser.parse_args()
 
-    if opts.help:
-        # TODO: update usage
-        print("usage: wordle_solver.py [-d path] [-b blacklist] [-c corrects] [-w wrong_spots]")
-        exit(0)
-
-    ws = WordleSolver(opts.data)
+    ws = WordleSolver(args.data)
     
-    if opts.random:
+    if args.random:
         print(ws.get_unique_word())
         exit(0)
     
-    ws.set_wrong_spots(parse_wrong_spots(opts.wrong))
-    ws.set_corrects(parse_corrects(opts.correct))
-    ws.set_blacklist(parse_blacklist(opts.blacklist))
+    ws.set_wrong_spots(parse_wrong_spots(args.wrong))
+    ws.set_corrects(parse_corrects(args.correct))
+    ws.set_blacklist(parse_blacklist(args.blacklist))
 
     # print(ws.blacklist)
     # print(ws.corrects)
