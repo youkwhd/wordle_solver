@@ -1,13 +1,21 @@
 import random
+from . import filter
 
 class WordleSolver():
     words: list[str] = []
-    blacklist: list[str] = []
-    corrects: dict[str, int] = {}
+    blacklist: dict[str, list[int]] = {}
+    corrects: dict[str, list[int]] = {}
     wrong_spots: dict[str, list[int]] = {}
 
     def __init__(self, word_file_path: str):
         self.words = self.load_words(word_file_path)
+    
+    def solve(self) -> list[str]:
+        self.words = filter.blacklist_alphabets(self.words, self.blacklist)
+        self.words = filter.correct_alphabets(self.words, self.corrects)
+        self.words = filter.wrong_spot(self.words, self.wrong_spots)
+
+        return self.words
     
     def add_blacklist(self, word: int, positions: list[int]):
         for pos in positions:
@@ -42,6 +50,6 @@ class WordleSolver():
         word = random.choice(self.words)
 
         if len(word) != len(set(word)):
-            return self.get_unique_word(self.words)
+            return self.get_unique_word()
         
         return word
