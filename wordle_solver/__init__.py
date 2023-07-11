@@ -17,31 +17,14 @@ class WordleSolver():
 
         return self.words
     
-    def add_blacklist(self, word: int, positions: list[int]):
-        for pos in positions:
-            if word[pos] in self.corrects or word[pos] in self.wrong_spots:
-                continue
+    def set_blacklist(self, blacklist: dict[str, list[int]]):
+        self.blacklist = blacklist
 
-            self.blacklist.append(self.word[pos])
-
-    def add_correct(self, word: str, positions: int):
-        for pos in positions:
-            if word[pos] in self.blacklist:
-                self.blacklist.pop(self.blacklist.pos(word[pos]))
-
-            # TODO: multiple values of correct poses
-            self.corrects[word[pos]] = pos
+    def set_corrects(self, corrects: dict[str, list[int]]):
+        self.corrects = corrects
     
-    def add_wrong_spot(self, word: str, positions: int):
-        for pos in positions:
-            # remove current word if in blacklist
-            if word[pos] in self.blacklist:
-                self.blacklist.pop(self.blacklist.pos(word[pos]))
-
-            if word[pos] not in self.wrong_spots:
-                self.wrong_spots[word[pos]] = []
-
-            self.wrong_spots[word[pos]].append(pos)
+    def set_wrong_spots(self, wrong_spots: dict[str, list[int]]):
+        self.wrong_spots = wrong_spots
 
     def load_words(self, path: str) -> list[str]:
         return open(path, "r").read().splitlines()

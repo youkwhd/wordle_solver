@@ -55,13 +55,9 @@ if __name__ == "__main__":
         print(ws.get_unique_word())
         exit(0)
     
-    ws.blacklist = parse_blacklist(opts.blacklist)
-    ws.wrong_spots = parse_wrong_spots(opts.wrong)
-    ws.corrects = parse_wrong_spots(opts.correct)
-
-    # print(ws.blacklist)
-    # print(ws.wrong_spots)
-    # print(ws.corrects)
+    ws.set_blacklist(parse_blacklist(opts.blacklist))
+    ws.set_wrong_spots(parse_wrong_spots(opts.wrong))
+    ws.set_corrects(parse_wrong_spots(opts.correct))
 
     possible_words = ws.solve()
     for word in possible_words:
