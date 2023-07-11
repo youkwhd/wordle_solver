@@ -6,7 +6,7 @@ Script to help solving daily worldes.
 Examples
 --------
 
-Using word "utile" as input, and the result from the wordle game is:
+First guess "utile", and the result from the wordle game is:
 - u (correct but at the wrong spot)
 - t (incorrect)
 - i (incorrect)
