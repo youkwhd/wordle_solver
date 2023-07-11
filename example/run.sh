@@ -3,6 +3,6 @@
 cd $(dirname $0)
 cd ../
 
-python wordle_solver.py -w p:1 r:3 i:2 t:5 \
-                        -b o:2 c:4 h:5 w:1 s:3 y:5 a:1 g:1 a:3 d:2 \
-                        -c p:4 r:2 i:3 e:5
+python wordle_solver.py -w t:1 a:5 t:3 a:4 t:2 a:3 c:1 \
+                        -b o:2 n:3 g:4 v:1 i:2 l:5 s:1 r:4 k:5 d:3 \
+                        -c a:2 e:4 t:5 \

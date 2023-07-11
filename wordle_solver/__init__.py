@@ -18,7 +18,11 @@ class WordleSolver():
         return self.words
     
     def set_blacklist(self, blacklist: dict[str, list[int]]):
-        self.blacklist = blacklist
+        for ch, positions in blacklist.items():
+            if ch in self.corrects or ch in self.wrong_spots:
+                continue
+
+            self.blacklist[ch] = positions
 
     def set_corrects(self, corrects: dict[str, list[int]]):
         self.corrects = corrects
