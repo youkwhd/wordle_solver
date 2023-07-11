@@ -1,4 +1,39 @@
-wordle_solver.py
-================
+wordle_solver
+=============
 
-Yet another wordle solver.
+Script to help solving daily worldes.
+
+Examples
+--------
+
+Using word "utile" as input, and the result from the wordle game is:
+- u (correct but at the wrong spot)
+- t (incorrect)
+- i (incorrect)
+- l (correct but at the wrong spot)
+- e (incorrect)
+
+::
+    ./wordle_solver.py -b t:2 i:3 e:5 -w u:1 l:4
+
+Second guess using word "slunk" as input:
+- s (incorrect)
+- l (correct)
+- u (correct)
+- n (incorrect)
+- k (incorrect)
+
+::
+    ./wordle_solver.py -b t:2 i:3 e:5 s:1 n:4 k:5 -w u:1 l:4 -c l:2 u:3
+
+Third guess "bluff":
+- b (correct)
+- l (correct)
+- u (correct)
+- f (incorrect)
+- f (incorrect)
+
+::
+    ./wordle_solver.py -b t:2 i:3 e:5 s:1 n:4 k:5 f:4 f:5 -w u:1 l:4 -c l:2 u:3 b:1
+
+Yields 1 word, "blurb". Which is the correct answer.
