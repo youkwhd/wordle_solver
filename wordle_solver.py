@@ -4,11 +4,11 @@ from argparse import ArgumentParser as __ArgumentParser
 from wordle_solver import WordleSolver
 
 class ArgumentParser(__ArgumentParser):
-    def print_help(self, file=None):
-        print("Usage: wordle_solver.py [-r] [-d | --data file_path] [-b blacklist]... [-c corrects]... [-w wrong_spots]...")
+    def print_help(self, _=None):
+        print("Usage: wordle_solver.py [-r] [-d | --data file_path] [-bcw ...]")
         print("Yet another wordle solver.")
 
-    def error(self, message: str):
+    def error(self, _: str):
         self.print_help()
         exit(1)
 
@@ -23,7 +23,7 @@ def parse_characters(characters: list[str]) -> dict[str, list[int]]:
         pos = int(pos)
 
         if pos <= 0 or pos > __WORD_SIZE__:
-            print("Overflow to word size")
+            print("Max word length is", __WORD_SIZE__, "found", pos)
             exit(1)
         
         if ch not in result:
@@ -52,7 +52,7 @@ if __name__ == "__main__":
     args = argparser.parse_args()
 
     ws = WordleSolver(args.data)
-    
+
     if args.random:
         print(ws.get_unique_word())
         exit(0)
@@ -64,5 +64,3 @@ if __name__ == "__main__":
     possible_words = ws.solve()
     for word in possible_words:
         print(word)
-
-    pass
