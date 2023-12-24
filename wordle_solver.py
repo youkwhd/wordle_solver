@@ -5,8 +5,8 @@ from wordle_solver import WordleSolver
 
 class ArgumentParser(__ArgumentParser):
     def print_help(self, file=None):
-        # TODO: expand help message
-        print("usage: wordle_solver.py [-d file_path] [-b blacklist]... [-c corrects]... [-w wrong_spots]...")
+        print("Usage: wordle_solver.py [-r] [-d | --data file_path] [-b blacklist]... [-c corrects]... [-w wrong_spots]...")
+        print("Yet another wordle solver.")
 
     def error(self, message: str):
         self.print_help()
@@ -60,10 +60,6 @@ if __name__ == "__main__":
     ws.set_wrong_spots(parse_wrong_spots(args.wrong))
     ws.set_corrects(parse_corrects(args.correct))
     ws.set_blacklist(parse_blacklist(args.blacklist))
-
-    # print(ws.blacklist)
-    # print(ws.corrects)
-    # print(ws.wrong_spots)
 
     possible_words = ws.solve()
     for word in possible_words:
