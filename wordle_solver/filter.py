@@ -12,7 +12,7 @@ def wrong_spot(words: list[str], wrong_spots: dict[str, list[int]]) -> list[str]
 
     return list(filter(__filter, words))
 
-def blacklist_alphabets(words: list[str], chars: dict[str, list[str]]) -> list[str]:
+def blacklist_alphabets(words: list[str], chars: dict[str, list[int]]) -> list[str]:
     def __filter(word: str) -> bool:
         # TODO: blacklist relative to position
         for char, _ in chars.items():
